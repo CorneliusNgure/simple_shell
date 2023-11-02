@@ -29,19 +29,3 @@ Use the following command to compile the custom shell:
 ```bash
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 
-USAGE:
-
-The custom shell supports a variety of commands and features, including:
-
-- Running system commands (e.g., ls, pwd, echo).
-- Redirecting input and output using < and > operators.
-- Piping commands using the | operator.
-- Using built-in commands (e.g., cd, exit).
-
-Author:
-	Cornelius Ngure.
-	kingcornelius07@gmail.com
-	https://github.com/CorneliusNgure
-
-Acknowledgments:
-- Inspiration, guidance, and support from open-source shell projects and the alx Africa community.
