@@ -42,3 +42,6 @@ Author:
 	Cornelius Ngure.
 	kingcornelius07@gmail.com
 	https://github.com/CorneliusNgure
+
+Acknowledgments:
+- Inspiration, guidance, and support from open-source shell projects and the alx Africa community.
