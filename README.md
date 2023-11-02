@@ -28,10 +28,3 @@ Use the following command to compile the custom shell:
 
 ```bash
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
-
-
-### Running the Custom Shell
-To run the custom shell, use:
-
-```
-./hsh
