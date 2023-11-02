@@ -1,5 +1,10 @@
 # Custom Simple Shell Program
 
+Author: 
+	Cornelius Ngure
+	kingcornelius07@gmail.com
+	https://github.com/CorneliusNgure
+
 ## Overview
 
 This is a custom shell program developed in C that provides a command-line interface for interacting with the operating system. The custom shell allows users to execute various system commands and perform basic file operations. It is designed to provide a user-friendly and interactive experience for working with a command-line interface.
