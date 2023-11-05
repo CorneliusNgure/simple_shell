@@ -7,9 +7,9 @@
  * Return: void.
  */
 
-void run_user_command(const char *command)
+void run_user_command(char *command)
 {
-	char args[] = {"/bin/sh", "-c", NULL, NULL};
+	char *args[] = {"/bin/sh", "-c", NULL, NULL};
 	int status;
 	pid_t pid = fork();
 

@@ -9,6 +9,6 @@
 
 void write_to_stdout(const char *outputText);
 char *readUserInput();
-void run_user_command(const char *command);
+void run_user_command(char *command);
 
 #endif
