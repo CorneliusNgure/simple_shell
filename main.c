@@ -9,13 +9,12 @@
 int main(void)
 {
 	char *input;
-	size_t input_length;
 
 	while (1)
 	{
 		write_to_stdout("kings_shell$$> ");
 		input = readUserInput();
-		run_user_command(command);
+		run_user_command(input);
 
 		if (input == NULL)
 			break;

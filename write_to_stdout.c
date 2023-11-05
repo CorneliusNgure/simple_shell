@@ -9,9 +9,9 @@
 
 void write_to_stdout(const char *outputText)
 {
-	size_t output_length = strlen(outputText);
-	size_t bytes_written = write(STDOUT_FILENO, outputText, output_length);
+	int output_length = strlen(outputText);
+	int bytes_written = write(STDOUT_FILENO, outputText, output_length);
 
-	if (bytes_written = -1)
+	if (bytes_written == -1)
 		perror("Write error");
 }
