@@ -21,7 +21,7 @@ void run_user_command(char *command)
 
 	if (pid == 0)
 	{
-		args[2] = (char *)command;
+		args[2] = command;
 		if (execve("/bin/sh", args, NULL) == -1)
 		{
 			perror("execve");

@@ -11,15 +11,12 @@ char _strdup(char *src)
 {
 	char *dest = (char *)malloc(_strlen(src));
 
-	if (src == NULL)
-		return (NULL);
-
 	if (dest == NULL)
 	{
 		perror("malloc");
 		return (NULL);
 	}
-	_strncpy(dest, src);
+	_strncpy(dest, src, _strlen(src) + 1);
 
 	return (dest);
 }
@@ -36,7 +33,7 @@ char _strdup(char *src)
  * Return: pointer to the copied string (dest).
  */
 
-char *_strncpy(char *dest, char *src, int n)
+char *_strncpy(char *dest, const char *src, int n)
 {
 	int count = 0;
 
@@ -61,7 +58,7 @@ char *_strncpy(char *dest, char *src, int n)
  * Return: length
  */
 
-int _strlen(char *s)
+int _strlen(const char *s)
 {
 	int string_length = 0;
 

@@ -10,8 +10,8 @@
 void write_to_stdout(const char *outputText);
 char *readUserInput();
 void run_user_command(char *command);
-char _strdup(char *src);
-char *_strncpy(char *dest, char *src, int n);
-int _strlen(char *s);
+char _strdup(const char *src);
+char *_strncpy(char *dest, const char *src, int n);
+int _strlen(const char *s);
 
 #endif
