@@ -33,7 +33,7 @@ void run_user_command(char *command)
 		wait(&status);
 		if (WEXITSTATUS(status) && WEXITSTATUS(status) != 0)
 		{
-			write_to_stdout("Command exited with status %d\n");
+			write_to_stdout("Command exited with error");
 		}
 	}
 }
