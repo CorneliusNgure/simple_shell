@@ -7,7 +7,7 @@
  * Return: the duplicated string.
  */
 
-char _strdup(char *src)
+char *_strdup(const char *src)
 {
 	char *dest = (char *)malloc(_strlen(src));
 
