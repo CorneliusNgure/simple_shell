@@ -11,7 +11,9 @@ void write_to_stdout(const char *outputText);
 char *readUserInput();
 char *_strdup(const char *src);
 char *_strncpy(char *dest, const char *src, int n);
+char *_strcpy(char *dest, const char *src);
 int _strlen(const char *s);
+char *_strcat(char *dest, char *src);
 void run_user_command(char *command);
 
 #endif
