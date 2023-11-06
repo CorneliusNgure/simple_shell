@@ -6,7 +6,6 @@
  *
  * Return: void.
  */
-
 void write_to_stdout(const char *outputText)
 {
 	int output_length = strlen(outputText);
