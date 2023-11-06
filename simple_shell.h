@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
+void exit_shell(void);
 void write_to_stdout(const char *outputText);
 char *readUserInput();
 char *_strdup(const char *src);
