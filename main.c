@@ -1,6 +1,32 @@
 #include "simple_shell.h"
 
 /**
+ * printCurrent_env_vars - prints the current environment variables.
+ *
+ */
+
+void printCurrent_env_vars(void)
+{
+	int i = 0;
+	char *env_var;
+	extern char **environ;
+
+	while (1)
+	{
+		if (environ != NULL)
+		{
+			env_var = environ[i];
+		}
+		if (env_var == NULL)
+			break;
+
+		write_to_stdout(env_var);
+		write_to_stdout("\n");
+		i++;
+	}
+}
+
+/**
  * _strcmp - function that compares two strings.
  *
  * @s1: string 1.
@@ -56,11 +82,17 @@ int main(void)
 				free(input);
 				exit_shell();
 			}
-
-			run_user_command(input);
-			free(input);
+			else if (_strcmp(input, "env") == 0)
+			{
+				free(input);
+				printCurrent_env_vars();
+			}
+			else
+			{
+				run_user_command(input);
+				free(input);
+			}
 		}
 	}
-
 	return (0);
 }

@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-void exit_shell(void);
 void write_to_stdout(const char *outputText);
 char *readUserInput();
 char *_strdup(const char *src);
@@ -16,5 +15,7 @@ char *_strcpy(char *dest, const char *src);
 int _strlen(const char *s);
 char *_strcat(char *dest, char *src);
 void run_user_command(char *command);
+void exit_shell(void);
+void printCurrent_env_vars(void);
 
 #endif
