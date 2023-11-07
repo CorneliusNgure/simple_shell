@@ -8,10 +8,10 @@
 char *custom_getline(void)
 {
 	static char buffer[BUFFER_SIZE];
-	static int i = 0;
+	int i = 0;
 	int c, length = 0;
 
-	while(1)
+	while (1)
 	{
 		if (i >= length)
 		{

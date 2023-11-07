@@ -101,6 +101,12 @@ int _strlen(const char *s)
 	return (string_length);
 }
 
+/**
+ * readUserInput - reads the user input from stdin.
+ *
+ * Return: the user input string.
+ */
+
 char *readUserInput()
 {
 	char *userInput = custom_getline();
