@@ -1,6 +1,8 @@
 #ifndef SIMPLE_SHELL_H
 #define SIMPLE_SHELL_H
 
+#define BUFFER_SIZE 1024
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,5 +19,6 @@ char *_strcat(char *dest, char *src);
 void run_user_command(char *command);
 void exit_shell(void);
 void printCurrent_env_vars(void);
+char *custom_getline(void);
 
 #endif

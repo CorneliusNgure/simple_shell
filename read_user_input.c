@@ -109,22 +109,14 @@ int _strlen(const char *s)
 
 char *readUserInput()
 {
-	char input[1024];
-	char *userInput;
+	char *userInput = custom_getline();
 
-	if (fgets(input, sizeof(input), stdin) == NULL)
-	return (NULL);
-
-	if (_strlen(input) > 0 && input[_strlen(input) - 1] == '\n')
+	if (userInput != NULL && _strlen(userInput) > 0)
 	{
-		input[_strlen(input) - 1] = '\0';
-	}
-
-	userInput = _strdup(input);
-	if (userInput == NULL)
-	{
-		perror("strdup");
-		exit(EXIT_FAILURE);
+		if (userInput[_strlen(userInput) - 1] == '\n')
+		{
+			userInput[_strlen(userInput) - 1] = '\0';
+		}
 	}
 
 	return (userInput);

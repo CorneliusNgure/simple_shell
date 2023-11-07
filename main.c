@@ -93,6 +93,8 @@ int main(void)
 				free(input);
 			}
 		}
+		else
+			exit_shell();
 	}
 	return (0);
 }
