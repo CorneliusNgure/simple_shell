@@ -20,6 +20,6 @@ void run_user_command(char *command);
 void exit_shell(void);
 void printCurrent_env_vars(void);
 char *custom_getline(void);
-char get_env_path(char *command);
+char *get_env_path(char *command);
 
 #endif
