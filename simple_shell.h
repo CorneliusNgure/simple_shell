@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <stddef.h>
 
 void write_to_stdout(const char *outputText);
 char *readUserInput();
@@ -21,7 +22,8 @@ void exit_shell(void);
 void printCurrent_env_vars(void);
 char *custom_getline(void);
 char *get_env_path(char *command);
-char *_strtok(char *str, const char *delim);
 const char *_strchr(const char *s, char c);
+int is_delimiter(char c, const char *delim);
+char *_strtok(char *str, const char *delim);
 
 #endif

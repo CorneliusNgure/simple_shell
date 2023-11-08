@@ -21,34 +21,57 @@ const char *_strchr(const char *s, char c)
 	return (NULL);
 }
 
-/**
- * _strtok - tokenises a string.
- * @str: string to be tokenized.
- * @delim: string delimeter.
- *
- * Return: tokenized string.
- */
+int is_delimiter(char c, const char *delim)
+{
+	while (*delim)
+	{
+		if (*delim == c)
+		{
+			return (1);
+		}
+		delim++;
+	}
+	return (0);
+}
 
 char *_strtok(char *str, const char *delim)
 {
-	static char *token, *next;
+	static char *last_token = 0;
+	char *token;
 
-	if (str != NULL)
-		next = str;
-
-	if (next == NULL || *next == '\0')
+	if (str)
+	{
+		last_token = str;
+	}
+	else if (!last_token)
 		return (NULL);
 
-	token = next;
-	while (*next != '\0' && _strchr(delim, *next) == NULL)
+	while (*last_token && is_delimiter(*last_token, delim))
 	{
-		next++;
+		last_token++;
 	}
 
-	if (*next != '\0')
+	if (*last_token == '\0')
 	{
-		*next = '\0';
-		next++;
+		last_token = NULL;
+		return (NULL);
+	}
+
+	token = last_token;
+
+	while (*last_token && !is_delimiter(*last_token, delim))
+	{
+		last_token++;
+	}
+
+	if (*last_token == '\0')
+	{
+		last_token = NULL;
+	}
+	else
+	{
+		*last_token = '\0';
+		last_token++;
 	}
 
 	return (token);
