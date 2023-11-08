@@ -31,7 +31,8 @@ void run_user_command(char *input)
 	int status, i = 0;
 	pid_t pid;
 	char error_msg[] = "Command exited with error: ";
-	char *full_error_msg, *token = strtok(input, " "), *args[BUFFER_SIZE], exec_path;
+	char *full_error_msg, *token = _strtok(input, " ");
+	char *args[BUFFER_SIZE], *exec_path;
 
 	if (token == NULL)
 		return;
@@ -84,6 +85,8 @@ void run_user_command(char *input)
 /**
  * get_env_path - gets the PATH.
  * @command: user input command.
+ *
+ * Return: pointer to PATH.
  */
 
 char *get_env_path(char *command)
@@ -108,7 +111,7 @@ char *get_env_path(char *command)
 
 		if (access(full_path, X_OK) == 0)
 		{
-			return(full_path);
+			return (full_path);
 		}
 
 		free(full_path);
