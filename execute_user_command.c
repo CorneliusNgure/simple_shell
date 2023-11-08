@@ -53,7 +53,7 @@ void run_user_command(char *input)
 
 	if (pid == 0)
 	{
-		*exec_path = get_env_path(args[0]);
+		exec_path = get_env_path(args[0]);
 		if (exec_path != NULL)
 		{
 			if (execve(exec_path, args, NULL) == -1)
@@ -86,7 +86,7 @@ void run_user_command(char *input)
  * @command: user input command.
  */
 
-void get_env_path(char *command)
+char get_env_path(char *command)
 {
 	char *path = getenv("PATH");
 	char *token, *full_path;
