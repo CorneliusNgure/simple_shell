@@ -23,50 +23,98 @@ char *_strcpy(char *dest, const char *src)
 
 /**
  * run_user_command - executes the user input command.
- * @command: the user input.
+ * @input: the user command.
  */
-void run_user_command(char *command)
-{
-	char *args[] = {"/bin/sh", "-c", NULL, NULL};
-	int status;
-	pid_t pid;
-	char error_msg[] = "Command exited with error: ", *full_error_msg;
 
-	if (access(command, X_OK) == -1)
-	{
-		write_to_stdout("Command does not exist or not executable\n");
+void run_user_command(char *input)
+{
+	int status, i = 0;
+	pid_t pid;
+	char error_msg[] = "Command exited with error: ", *exec_path;
+	char *full_error_msg, *token = strtok(input, " "), *args[BUFFER_SIZE];
+
+	if (token == NULL)
 		return;
+
+	while (token != NULL && i < BUFFER_SIZE - 1)
+	{
+		args[i] = token;
+		token = strtok(NULL, " ");
+		i++;
 	}
+	args[i] = NULL;
+
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork()");
 		exit(EXIT_FAILURE);
 	}
+
 	if (pid == 0)
 	{
-		args[2] = command;
-		if (execve("/bin/sh", args, NULL) == -1)
+		*exec_path = get_env_path(args[0]);
+		if (exec_path != NULL)
 		{
-			perror("execve");
-			exit(EXIT_FAILURE);
+			if (execve(exec_path, args, NULL) == -1)
+			{
+				perror("execve");
+				exit(EXIT_FAILURE);
+			}
 		}
-	}
-	else
-	{
-		wait(&status);
-		if (WEXITSTATUS(status) && WEXITSTATUS(status) != 0)
+		else
 		{
-			full_error_msg = malloc(_strlen(error_msg) + _strlen(command) + 1);
+			full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
 			if (full_error_msg == NULL)
 			{
 				perror("malloc");
 				exit(EXIT_FAILURE);
 			}
 			_strcpy(full_error_msg, error_msg);
-			_strcat(full_error_msg, command);
+			_strcat(full_error_msg, args[0]);
 			write_to_stdout(full_error_msg);
 			free(full_error_msg);
+			exit(EXIT_FAILURE);
 		}
 	}
+	else
+		wait(&status);
+}
+
+/**
+ * get_env_path - gets the PATH.
+ * @command: user input command.
+ */
+
+void get_env_path(char *command)
+{
+	char *path = getenv("PATH");
+	char *token, *full_path;
+	char delimiter[] = ":";
+
+	token = strtok(path, delimiter);
+
+	while (token != NULL)
+	{
+		full_path = malloc(_strlen(token) + _strlen(command) + 2);
+		if (full_path == NULL)
+		{
+			perror("malloc");
+			exit(EXIT_FAILURE);
+		}
+		_strcpy(full_path, token);
+		_strcat(full_path, "/");
+		_strcat(full_path, command);
+
+		if (access(full_path, X_OK) == 0)
+		{
+			write_to_stdout(full_path);
+			free(full_path);
+			return;
+		}
+
+		free(full_path);
+		token = strtok(NULL, delimiter);
+	}
+	write_to_stdout("Command not found");
 }
