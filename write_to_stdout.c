@@ -21,6 +21,13 @@ const char *_strchr(const char *s, char c)
 	return (NULL);
 }
 
+/**
+ * is_delimiter - identifies delimeters in a string.
+ * @c: the character to check.
+ * @delim: the delimeter to look for.
+ * Return: the delimeter.
+ */
+
 int is_delimiter(char c, const char *delim)
 {
 	while (*delim)
@@ -34,9 +41,16 @@ int is_delimiter(char c, const char *delim)
 	return (0);
 }
 
+/**
+ * _strtok - tokenizes a string.
+ * @str: string to tokenize.
+ * @delim: the delimeter.
+ * Return: tokenized string.
+ */
+
 char *_strtok(char *str, const char *delim)
 {
-	static char *last_token = 0;
+	static char *last_token;
 	char *token;
 
 	if (str)
