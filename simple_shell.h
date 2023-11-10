@@ -25,5 +25,10 @@ char *get_env_path(char *command);
 const char *_strchr(const char *s, char c);
 int is_delimiter(char c, const char *delim);
 char *_strtok(char *str, const char *delim);
+int _strncmp(char *s1, char *s2, size_t n);
+int _isdigit(int c);
+void exit_shell_with_status(int status);
+int _atoi(const char *str);
+int _strcmp(char *s1, char *s2);
 
 #endif

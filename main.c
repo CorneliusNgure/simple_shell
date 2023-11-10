@@ -1,6 +1,35 @@
 #include "simple_shell.h"
 
 /**
+ * _atoi - converts a string to an integer.
+ * @str: the string to convert.
+ * Return: the converted integer.
+ */
+
+int _atoi(const char *str)
+{
+	int result = 0;
+	int sign = 1;
+
+	while (*str == ' ' || (*str >= '\t' && *str <= '\r'))
+		str++;
+
+	if (*str == '-' || *str == '+')
+	{
+		sign = (*str == '-') ? -1 : 1;
+		str++;
+	}
+
+	while (_isdigit(*str))
+	{
+		result = result * 10 + (*str - '0');
+		str++;
+	}
+
+	return (sign * result);
+}
+
+/**
  * printCurrent_env_vars - prints the current environment variables.
  *
  */
@@ -68,7 +97,8 @@ void exit_shell(void)
 
 int main(void)
 {
-	char *input;
+	char *input, *arg;
+	int exit_status;
 
 	while (1)
 	{
@@ -77,24 +107,26 @@ int main(void)
 
 		if (input != NULL)
 		{
-			if (_strcmp(input, "exit") == 0)
+			if (_strncmp(input, "exit", 4) == 0)
 			{
+				arg = _strtok(input + 4, " ");
+				exit_status = (arg != NULL) ? _atoi(arg) : 0;
+
 				free(input);
-				exit_shell();
+				exit_shell_with_status(exit_status);
 			}
 			else if (_strcmp(input, "env") == 0)
 			{
 				free(input);
 				printCurrent_env_vars();
 			}
+
 			else
 			{
 				run_user_command(input);
 				free(input);
 			}
 		}
-		else
-			exit_shell();
 	}
 	return (0);
 }

@@ -1,6 +1,46 @@
 #include "simple_shell.h"
 
 /**
+ * _strncmp - compares two strings up to n no. of characters.
+ * @s1: the first string.
+ * @s2: the second string.
+ * @n: the maximum number of characters to compare.
+ * Return:
+ *   - 0 if the strings are equal,
+ *   - a negative value if s1 is less than s2,
+ *   - a positive value if s1 is greater than s2.
+ */
+
+int _strncmp(char *s1, char *s2, size_t n)
+{
+	size_t i;
+
+	for (i = 0; i < n; ++i)
+	{
+		if (s1[i] != s2[i] || s1[i] == '\0' || s2[i] == '\0')
+			return (s1[i] - s2[i]);
+	}
+	
+	return (0);
+}
+
+/**
+ * _isdigit - checks for a digit (0 through 9)
+ *
+ * @c: digit to be checked.
+ *
+ * Return: 1 if c is a digit and 0 otherwise.
+ */
+
+int _isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	else
+		return (0);
+}
+
+/**
  * _strcpy - Copies a string from source to destination.
  * @dest: The destination buffer.
  * @src: The source string to be copied.
@@ -28,7 +68,7 @@ char *_strcpy(char *dest, const char *src)
 
 void run_user_command(char *input)
 {
-	int status, i = 0;
+	int status, exit_status, i = 0;
 	pid_t pid;
 	char error_msg[] = "Command exited with error: ";
 	char *full_error_msg, *token;
@@ -48,6 +88,19 @@ void run_user_command(char *input)
 		i++;
 	}
 	args[i] = NULL;
+
+	if (_strcmp(args[0], "exit") == 0)
+	{
+		exit_status = 0;
+
+		if (args[1] != NULL)
+		{
+			exit_status = _atoi(args[1]);
+		}
+
+		free(input);
+		exit_shell_with_status(exit_status);
+	}
 
 	pid = fork();
 	if (pid == -1)

@@ -121,6 +121,9 @@ char *custom_getline(void)
 		c = buffer[i++];
 		if (c == '\n' || c == '\0')
 		{
+			if (i == 1)
+				return (NULL);
+
 			buffer[--i] = '\0';
 
 			return (_strdup(buffer));
@@ -136,7 +139,7 @@ char *custom_getline(void)
  */
 void write_to_stdout(const char *outputText)
 {
-	int output_length = strlen(outputText);
+	int output_length = _strlen(outputText);
 	int bytes_written = write(STDOUT_FILENO, outputText, output_length);
 
 	if (bytes_written == -1)
