@@ -129,6 +129,10 @@ void run_user_command(char *input)
 			write_to_stdout("Usage: unsetenv VARIABLE\n");
 		}
 	}
+	else if (_strcmp(args[0], "cd") == 0)
+	{
+		cd_built_in(args);
+	}
 	else if (_strcmp(args[0], "env") == 0)
 	{
 		free(input);

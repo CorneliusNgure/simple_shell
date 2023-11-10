@@ -30,5 +30,7 @@ int _isdigit(int c);
 void exit_shell_with_status(int status);
 int _atoi(const char *str);
 int _strcmp(char *s1, char *s2);
+void run_user_command(char *input);
+void cd_built_in(char **args);
 
 #endif
