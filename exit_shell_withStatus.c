@@ -8,7 +8,7 @@
 
 void exit_shell_with_status(int status)
 {
-    write_to_stdout("Exiting the shell...\n");
+    write_to_stdout("Exiting kings_shell$$...\n");
     exit(status);
 }
 

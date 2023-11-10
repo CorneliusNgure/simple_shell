@@ -112,14 +112,12 @@ int main(void)
 				free(input);
 				write_to_stdout("Exiting kings_shell$$\n");
 				exit(0);
-
 			}
 			else if (_strncmp(input, "exit", 4) == 0)
 			{
 				arg = _strtok(input + 4, " ");
 				exit_status = (arg != NULL) ? _atoi(arg) : 0;
-				free(input);
-				write_to_stdout("Exiting kings_shell$$\n");
+				write_to_stdout("Exit status: ");
 				exit(exit_status);
 			}
 			else if (_strcmp(input, "env") == 0)
