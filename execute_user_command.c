@@ -22,51 +22,6 @@ char *_strcpy(char *dest, const char *src)
 }
 
 /**
- * _strsep - separates a string into tokens.
- * @stringp: the string to check.
- * @delim: the delimeter.
- * @Return: the tokenized string.
- *
- */
-
-char *_strsep(char **stringp, const char *delim)
-{
-	char *start = *stringp;
-	char *end = *stringp;
-
-	if (stringp == NULL || *stringp == NULL || delim == NULL)
-		return (NULL);
-
-	while (*end != '\0' && _strchr(delim, *end) != NULL)
-	{
-		end++;
-	}
-
-	if (*end == '\0')
-	{
-		*stringp = NULL;
-		return (NULL);
-	}
-	
-	start = end;
-
-	while (*end != '\0' && _strchr(delim, *end) == NULL)
-	{
-		end++;
-	}
-
-	if (*end != '\0')
-	{
-		*end = '\0';
-        end++;
-	}
-
-	*stringp = end;
-	return (start);
-}
-
-
-/**
  * run_user_command - executes the user input command.
  * @input: the user command.
  */
@@ -76,11 +31,15 @@ void run_user_command(char *input)
 	int status, i = 0;
 	pid_t pid;
 	char error_msg[] = "Command exited with error: ";
-	char *full_error_msg, *token = _strtok(input, " ");
+	char *full_error_msg, *token;
 	char *args[BUFFER_SIZE], *exec_path;
 
-	if (token == NULL)
-		return;
+	if (input != NULL)
+	{
+		token = _strtok(input, " ");
+		if (token == NULL)
+			return;
+	}
 
 	while (token != NULL && i < BUFFER_SIZE - 1)
 	{
@@ -140,7 +99,7 @@ char *get_env_path(char *command)
 	char *token, *full_path;
 	char delimiter[] = ":";
 
-	token = strtok(path, delimiter);
+	token = _strtok(path, delimiter);
 
 	while (token != NULL)
 	{
