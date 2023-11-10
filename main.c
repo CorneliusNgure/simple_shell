@@ -85,7 +85,7 @@ int _strcmp(char *s1, char *s2)
  */
 void exit_shell(void)
 {
-	write_to_stdout("Exiting the shell...\n");
+	write_to_stdout("Exiting kings_shell$$...\n");
 	exit(0);
 }
 
@@ -107,20 +107,26 @@ int main(void)
 
 		if (input != NULL)
 		{
-			if (_strncmp(input, "exit", 4) == 0)
+			if (_strcmp(input, "exit") == 0)
+			{
+				free(input);
+				write_to_stdout("Exiting kings_shell$$\n");
+				exit(0);
+
+			}
+			else if (_strncmp(input, "exit", 4) == 0)
 			{
 				arg = _strtok(input + 4, " ");
 				exit_status = (arg != NULL) ? _atoi(arg) : 0;
-
 				free(input);
-				exit_shell_with_status(exit_status);
+				write_to_stdout("Exiting kings_shell$$\n");
+				exit(exit_status);
 			}
 			else if (_strcmp(input, "env") == 0)
 			{
 				free(input);
 				printCurrent_env_vars();
 			}
-
 			else
 			{
 				run_user_command(input);
