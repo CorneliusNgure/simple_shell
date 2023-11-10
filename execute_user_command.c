@@ -22,6 +22,51 @@ char *_strcpy(char *dest, const char *src)
 }
 
 /**
+ * _strsep - separates a string into tokens.
+ * @stringp: the string to check.
+ * @delim: the delimeter.
+ * @Return: the tokenized string.
+ *
+ */
+
+char *_strsep(char **stringp, const char *delim)
+{
+	char *start = *stringp;
+	char *end = *stringp;
+
+	if (stringp == NULL || *stringp == NULL || delim == NULL)
+		return (NULL);
+
+	while (*end != '\0' && _strchr(delim, *end) != NULL)
+	{
+		end++;
+	}
+
+	if (*end == '\0')
+	{
+		*stringp = NULL;
+		return (NULL);
+	}
+	
+	start = end;
+
+	while (*end != '\0' && _strchr(delim, *end) == NULL)
+	{
+		end++;
+	}
+
+	if (*end != '\0')
+	{
+		*end = '\0';
+        end++;
+	}
+
+	*stringp = end;
+	return (start);
+}
+
+
+/**
  * run_user_command - executes the user input command.
  * @input: the user command.
  */
@@ -40,7 +85,7 @@ void run_user_command(char *input)
 	while (token != NULL && i < BUFFER_SIZE - 1)
 	{
 		args[i] = token;
-		token = strtok(NULL, " ");
+		token = _strtok(NULL, " ");
 		i++;
 	}
 	args[i] = NULL;
@@ -115,7 +160,7 @@ char *get_env_path(char *command)
 		}
 
 		free(full_path);
-		token = strtok(NULL, delimiter);
+		token = _strtok(NULL, delimiter);
 	}
 	return (NULL);
 }
