@@ -20,7 +20,7 @@ int _strncmp(char *s1, char *s2, size_t n)
 		if (s1[i] != s2[i] || s1[i] == '\0' || s2[i] == '\0')
 			return (s1[i] - s2[i]);
 	}
-	
+
 	return (0);
 }
 
@@ -93,51 +93,88 @@ void run_user_command(char *input)
 	{
 		exit_status = 0;
 
-		if (args[1] != NULL)
-		{
-			exit_status = _atoi(args[1]);
-		}
-
-		free(input);
-		exit_shell_with_status(exit_status);
+	if (args[1] != NULL)
+	{
+		exit_status = _atoi(args[1]);
 	}
 
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork()");
-		exit(EXIT_FAILURE);
+	free(input);
+	exit_shell_with_status(exit_status);
 	}
-
-	if (pid == 0)
+	else if (_strcmp(args[0], "setenv") == 0)
 	{
-		exec_path = get_env_path(args[0]);
-		if (exec_path != NULL)
+		if (args[1] != NULL && args[2] != NULL && args[3] == NULL)
 		{
-			if (execve(exec_path, args, NULL) == -1)
+			if (setenv(args[1], args[2], 1) != 0)
 			{
-				perror("execve");
-				exit(EXIT_FAILURE);
+				perror("setenv");
 			}
 		}
 		else
 		{
-			full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
-			if (full_error_msg == NULL)
-			{
-				perror("malloc");
-				exit(EXIT_FAILURE);
-			}
-			_strcpy(full_error_msg, error_msg);
-			_strcat(full_error_msg, args[0]);
-			write_to_stdout(full_error_msg);
-			free(full_error_msg);
-			exit(EXIT_FAILURE);
+			write_to_stdout("Usage: setenv VARIABLE VALUE\n");
 		}
 	}
+	else if (_strcmp(args[0], "unsetenv") == 0)
+	{
+		if (args[1] != NULL && args[2] == NULL)
+		{
+			if (unsetenv(args[1]) != 0)
+			{
+				perror("unsetenv");
+			}
+		}
+		else
+		{
+			write_to_stdout("Usage: unsetenv VARIABLE\n");
+		}
+	}
+	else if (_strcmp(args[0], "env") == 0)
+	{
+		free(input);
+		printCurrent_env_vars();
+	}
 	else
-		wait(&status);
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork()");
+			exit(EXIT_FAILURE);
+		}
+
+		if (pid == 0)
+		{
+			exec_path = get_env_path(args[0]);
+			if (exec_path != NULL)
+			{
+				if (execve(exec_path, args, NULL) == -1)
+				{
+					perror("execve");
+					exit(EXIT_FAILURE);
+				}
+			}
+			else
+			{
+				full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
+				if (full_error_msg == NULL)
+				{
+					perror("malloc");
+					exit(EXIT_FAILURE);
+				}
+
+				_strcpy(full_error_msg, error_msg);
+				_strcat(full_error_msg, args[0]);
+				write_to_stdout(full_error_msg);
+				free(full_error_msg);
+				exit(EXIT_FAILURE);
+			}
+		}
+		else
+			wait(&status);
+	}
 }
+
 
 /**
  * get_env_path - gets the PATH.
