@@ -32,9 +32,9 @@ int _atoi(const char *str);
 int _strcmp(char *s1, char *s2);
 void run_user_command(char *input);
 void cd_built_in(char **args);
-size_t _strcspn(const char *s, const char *reject);
+size_t _strcspn(char *s, char *reject);
 char *_getenv(char *name);
-int _setenv(const char *name, const char *value, int overwrite);
+int _setenv(char *name, char *value, int overwrite);
 int _unsetenv(const char *name);
 
 #endif
