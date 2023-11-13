@@ -101,32 +101,32 @@ void run_user_command(char *input)
 	free(input);
 	exit_shell_with_status(exit_status);
 	}
-	else if (_strcmp(args[0], "setenv") == 0)
+	else if (_strcmp(args[0], "_setenv") == 0)
 	{
 		if (args[1] != NULL && args[2] != NULL && args[3] == NULL)
 		{
-			if (setenv(args[1], args[2], 1) != 0)
+			if (_setenv(args[1], args[2], 1) != 0)
 			{
-				perror("setenv");
+				perror("_setenv");
 			}
 		}
 		else
 		{
-			write_to_stdout("Usage: setenv VARIABLE VALUE\n");
+			write_to_stdout("Usage: _setenv VARIABLE VALUE\n");
 		}
 	}
-	else if (_strcmp(args[0], "unsetenv") == 0)
+	else if (_strcmp(args[0], "_unsetenv") == 0)
 	{
 		if (args[1] != NULL && args[2] == NULL)
 		{
-			if (unsetenv(args[1]) != 0)
+			if (_unsetenv(args[1]) != 0)
 			{
-				perror("unsetenv");
+				perror("_unsetenv");
 			}
 		}
 		else
 		{
-			write_to_stdout("Usage: unsetenv VARIABLE\n");
+			write_to_stdout("Usage: _unsetenv VARIABLE\n");
 		}
 	}
 	else if (_strcmp(args[0], "cd") == 0)
