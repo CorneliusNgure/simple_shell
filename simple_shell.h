@@ -33,7 +33,7 @@ int _strcmp(char *s1, char *s2);
 void run_user_command(char *input);
 void cd_built_in(char **args);
 size_t _strcspn(const char *s, const char *reject);
-char *_getenv(const char *name);
+char *_getenv(char *name);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
 

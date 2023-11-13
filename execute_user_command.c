@@ -93,50 +93,45 @@ void run_user_command(char *input)
 	{
 		exit_status = 0;
 
-	if (args[1] != NULL)
-	{
-		exit_status = _atoi(args[1]);
-	}
+		if (args[1] != NULL)
+		{
+			exit_status = _atoi(args[1]);
+		}
 
-	free(input);
-	exit_shell_with_status(exit_status);
+		free(input);
+		exit_shell_with_status(exit_status);
 	}
 	else if (_strcmp(args[0], "_setenv") == 0)
 	{
-		if (args[1] != NULL && args[2] != NULL && args[3] == NULL)
+		if (args[1] != NULL && args[2] != NULL)
 		{
-			if (_setenv(args[1], args[2], 1) != 0)
-			{
-				perror("_setenv");
-			}
+			if (_setenv(args[1], args[2], 1) == 0)
+			write_to_stdout("Environment variable set successfully.\n");
+
+			else
+				write_to_stdout("Failed to set environment variable.\n");
 		}
 		else
 		{
-			write_to_stdout("Usage: _setenv VARIABLE VALUE\n");
+			write_to_stdout("Usage: _setenv <name> <value>\n");
 		}
 	}
 	else if (_strcmp(args[0], "_unsetenv") == 0)
 	{
-		if (args[1] != NULL && args[2] == NULL)
+		if (args[1] != NULL)
 		{
-			if (_unsetenv(args[1]) != 0)
-			{
-				perror("_unsetenv");
-			}
+			if (_unsetenv(args[1]) == 0)
+			write_to_stdout("Environment variable unset successfully.\n");
+			else
+				write_to_stdout("Failed to unset environment variable.\n");
 		}
 		else
-		{
-			write_to_stdout("Usage: _unsetenv VARIABLE\n");
-		}
+			write_to_stdout("Usage: _unsetenv <name>\n");
 	}
+
 	else if (_strcmp(args[0], "cd") == 0)
 	{
 		cd_built_in(args);
-	}
-	else if (_strcmp(args[0], "env") == 0)
-	{
-		free(input);
-		printCurrent_env_vars();
 	}
 	else
 	{

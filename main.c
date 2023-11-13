@@ -125,7 +125,7 @@ int main(void)
 				free(input);
 				printCurrent_env_vars();
 			}
-			else
+		else
 			{
 				run_user_command(input);
 				free(input);
