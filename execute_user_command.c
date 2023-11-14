@@ -61,10 +61,6 @@ char *_strcpy(char *dest, const char *src)
 	return (dest_start);
 }
 
-/**
- * run_user_command - executes the user input command.
- * @input: the user command.
- */
 void run_user_command(char *input)
 {
     char **commands, *token, *command;
@@ -85,8 +81,17 @@ void run_user_command(char *input)
 
     while (token != NULL)
     {
-        commands[i] = token;
+        command = malloc((_strlen(token) + 1) * sizeof(char));
+        if (command == NULL)
+        {
+            perror("malloc");
+            exit(EXIT_FAILURE);
+        }
+
+        _strcpy(command, token);
+        commands[i] = command;
         i++;
+
         token = _strtok(NULL, separator);
     }
 
@@ -94,86 +99,161 @@ void run_user_command(char *input)
 
     for (j = 0; j < i; j++)
     {
-        *command = commands[j];
+        command = commands[j];
 
         while (*command == ' ')
             command++;
 
         len = _strlen(command);
+
         while (len > 0 && command[len - 1] == ' ')
             command[--len] = '\0';
 
         if (_strlen(command) > 0)
         {
+            printf("Executing command: %s\n", command);
             execute_single_command(command);
+            printf("Command executed successfully.\n");
         }
+    }
+
+    for (j = 0; j < i; j++)
+    {
+        free(commands[j]);
     }
 
     free(commands);
     free(input);
 }
 
-
 /**
  * execute_single_command - executes a single command.
- * @args: the arguments passed to the command.
+ * @command: the command to execute.
  */
-void execute_single_command(char **args)
-{
-    int status, exit_status;
-    pid_t pid;
-    char error_msg[] = "Command exited with error: ";
-    char *full_error_msg, *exec_path;
 
-    pid = fork();
-    if (pid == -1)
+void execute_single_command(char *command)
+{
+    int i = 0, exit_status, status;
+    pid_t pid;
+    char *error_msg = "Command exited with error: ";
+    char *full_error_msg, *token;
+    char *args[BUFFER_SIZE], *exec_path;
+
+    if (command != NULL)
     {
-        perror("fork()");
-        exit(EXIT_FAILURE);
+        token = _strtok(command, " ");
+        if (token == NULL)
+            return;
     }
 
-    if (pid == 0)
+    while (token != NULL && i < BUFFER_SIZE - 1)
     {
-        exec_path = get_env_path(args[0]);
-        if (exec_path != NULL)
+        args[i] = token;
+        token = _strtok(NULL, " ");
+        i++;
+    }
+    args[i] = NULL;
+
+    if (_strcmp(args[0], "exit") == 0)
+    {
+        exit_status = (args[1] != NULL) ? _atoi(args[1]) : 0;
+        exit_shell_with_status(exit_status);
+    }
+    else if (_strcmp(args[0], "_setenv") == 0)
+    {
+        if (args[1] != NULL && args[2] != NULL)
         {
-            if (execve(exec_path, args, NULL) == -1)
+            if (_setenv(args[1], args[2], 1) == 0)
+                write_to_stdout("Environment variable set successfully.\n");
+            else
+                write_to_stdout("Failed to set environment variable.\n");
+        }
+        else
+        {
+            write_to_stdout("Usage: _setenv <name> <value>\n");
+        }
+    }
+    else if (_strcmp(args[0], "_unsetenv") == 0)
+    {
+        if (args[1] != NULL)
+        {
+            if (_unsetenv(args[1]) == 0)
+                write_to_stdout("Environment variable unset successfully.\n");
+            else
+                write_to_stdout("Failed to unset environment variable.\n");
+        }
+        else
+            write_to_stdout("Usage: _unsetenv <name>\n");
+    }
+    else if (_strcmp(args[0], "cd") == 0)
+    {
+     	    cd_built_in(args);
+    }
+    else
+    {
+        pid = fork();
+        if (pid == -1)
+        {
+            perror("fork()");
+            exit(EXIT_FAILURE);
+        }
+
+        if (pid == 0)
+        {
+            exec_path = get_env_path(args[0]);
+            if (exec_path != NULL)
             {
-                perror("execve");
+                if (execve(exec_path, args, NULL) == -1)
+                {
+                    perror("execve");
+                    exit(EXIT_FAILURE);
+                }
+		free(exec_path);
+            }
+            else
+            {
+                full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
+                if (full_error_msg == NULL)
+                {
+                    perror("malloc");
+                    exit(EXIT_FAILURE);
+                }
+
+                _strcpy(full_error_msg, error_msg);
+                _strcat(full_error_msg, args[0]);
+                write_to_stdout(full_error_msg);
+                free(full_error_msg);
+		free(exec_path);
                 exit(EXIT_FAILURE);
             }
         }
         else
         {
-            full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
-            if (full_error_msg == NULL)
+            waitpid(pid, &status, 0);
+
+            if (WIFEXITED(status))
             {
-                perror("malloc");
-                exit(EXIT_FAILURE);
+                exit_status = WEXITSTATUS(status);
+                if (exit_status != 0)
+                {
+                    full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
+                    if (full_error_msg == NULL)
+                    {
+                        perror("malloc");
+                        exit(EXIT_FAILURE);
+                    }
+
+                    _strcpy(full_error_msg, error_msg);
+                    _strcat(full_error_msg, args[0]);
+                    write_to_stdout(full_error_msg);
+                    free(full_error_msg);
+                }
             }
-
-            _strcpy(full_error_msg, error_msg);
-            _strcat(full_error_msg, args[0]);
-            write_to_stdout(full_error_msg);
-
-            free(full_error_msg);
-
-            exit(EXIT_FAILURE);
-        }
-    }
-    else
-    {
-        wait(&status);
-
-        if (WIFEXITED(status))
-        {
-            exit_status = WEXITSTATUS(status);
-            if (exit_status != 0)
+            else if (WIFSIGNALED(status))
             {
-                write_to_stdout("Command exited with status: ");
-                write_to_stdout(_itoa(exit_status));
-                write_to_stdout("\n");
+                write_to_stdout("Command terminated by signal.\n");
             }
         }
     }
 }
+
