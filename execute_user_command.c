@@ -1,46 +1,6 @@
 #include "simple_shell.h"
 
 /**
- * _strncmp - compares two strings up to n no. of characters.
- * @s1: the first string.
- * @s2: the second string.
- * @n: the maximum number of characters to compare.
- * Return:
- *   - 0 if the strings are equal,
- *   - a negative value if s1 is less than s2,
- *   - a positive value if s1 is greater than s2.
- */
-
-int _strncmp(char *s1, char *s2, size_t n)
-{
-	size_t i;
-
-	for (i = 0; i < n; ++i)
-	{
-		if (s1[i] != s2[i] || s1[i] == '\0' || s2[i] == '\0')
-			return (s1[i] - s2[i]);
-	}
-
-	return (0);
-}
-
-/**
- * _isdigit - checks for a digit (0 through 9)
- *
- * @c: digit to be checked.
- *
- * Return: 1 if c is a digit and 0 otherwise.
- */
-
-int _isdigit(int c)
-{
-	if (c >= '0' && c <= '9')
-		return (1);
-	else
-		return (0);
-}
-
-/**
  * _strcpy - Copies a string from source to destination.
  * @dest: The destination buffer.
  * @src: The source string to be copied.
@@ -90,7 +50,7 @@ void run_user_command(char *input)
 }
 
 /**
- * process_commands - splits string based on ; & executes commands individually.
+ * process_commands - splits string based on ; & executes commands individually
  * @command: the user input string.
  */
 
@@ -120,26 +80,62 @@ void process_commands(char *command)
 }
 
 /**
- * execute_command - tokenizes user input string into arguments.
- * @args: the user command string.
+ * execute_external_command - runs non-built-in command.
+ * @args: the array of command and arguments.
+ */
+
+void execute_external_command(char *args[])
+{
+	pid_t pid;
+	int status;
+	char *exec_path;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork()");
+		exit(EXIT_FAILURE);
+	}
+
+	if (pid == 0)
+	{
+		exec_path = get_env_path(args[0]);
+
+		if (exec_path != NULL)
+		{
+			if (execve(exec_path, args, NULL) == -1)
+			{
+				write_to_stdout("Command exited with error: ");
+				write_to_stdout(args[0]);
+				perror("execve");
+				exit(EXIT_FAILURE);
+			}
+		}
+		else
+		{
+			write_to_stdout("Command not found: ");
+			write_to_stdout(args[0]);
+			exit(EXIT_FAILURE);
+		}
+	}
+	else
+		wait(&status);
+}
+
+/**
+ * execute_command - determines whether the command is a built-in command,
+ * or an external program and calls the corresponding function.
+ *
+ * @args: the array of command and arguments.
  */
 
 void execute_command(char *args[])
 {
-	pid_t pid;
-	int status, exit_status;
-	char error_msg[] = "Command exited with error: ";
-	char *full_error_msg, *exec_path;
+	int exit_status;
 
 	if (_strcmp(args[0], "exit") == 0)
 	{
-		exit_status = 0;
-
-		if (args[1] != NULL)
-		{
-			exit_status = _atoi(args[1]);
-		}
-
+		exit_status = (args[1] != NULL) ? _atoi(args[1]) : 0;
 		exit_shell_with_status(exit_status);
 	}
 	else if (_strcmp(args[0], "_setenv") == 0)
@@ -152,9 +148,7 @@ void execute_command(char *args[])
 				write_to_stdout("Failed to set environment variable.\n");
 		}
 		else
-		{
 			write_to_stdout("Usage: _setenv <name> <value>\n");
-		}
 	}
 	else if (_strcmp(args[0], "_unsetenv") == 0)
 	{
@@ -169,46 +163,7 @@ void execute_command(char *args[])
 			write_to_stdout("Usage: _unsetenv <name>\n");
 	}
 	else if (_strcmp(args[0], "cd") == 0)
-	{
 		cd_built_in(args);
-	}
 	else
-	{
-		pid = fork();
-		if (pid == -1)
-		{
-			perror("fork()");
-			exit(EXIT_FAILURE);
-		}
-
-		if (pid == 0)
-		{
-			exec_path = get_env_path(args[0]);
-			if (exec_path != NULL)
-			{
-				if (execve(exec_path, args, NULL) == -1)
-				{
-					perror("execve");
-					exit(EXIT_FAILURE);
-				}
-			}
-			else
-			{
-				full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
-				if (full_error_msg == NULL)
-				{
-					perror("malloc");
-					exit(EXIT_FAILURE);
-				}
-
-				_strcpy(full_error_msg, error_msg);
-				_strcat(full_error_msg, args[0]);
-				write_to_stdout(full_error_msg);
-				free(full_error_msg);
-				exit(EXIT_FAILURE);
-			}
-		}
-		else
-			wait(&status);
-	}
+		execute_external_command(args);
 }

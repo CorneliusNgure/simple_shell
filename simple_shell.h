@@ -41,5 +41,6 @@ int _unsetenv(const char *name);
 char *_itoa(int num, char *str, int base);
 void process_commands(char *input);
 void execute_command(char *args[]);
+void execute_external_command(char *args[]);
 
 #endif
