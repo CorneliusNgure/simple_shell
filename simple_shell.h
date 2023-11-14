@@ -38,5 +38,7 @@ size_t _strcspn(char *s, char *reject);
 char *_getenv(char *name);
 int _setenv(char *name, char *value, int overwrite);
 int _unsetenv(const char *name);
+void execute_single_command(char **args);
+char *_itoa(int num, char *str, int base);
 
 #endif
