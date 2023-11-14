@@ -61,199 +61,154 @@ char *_strcpy(char *dest, const char *src)
 	return (dest_start);
 }
 
+/**
+ * run_user_command - runs the user command.
+ * @input: the user input string command.
+ */
+
 void run_user_command(char *input)
 {
-    char **commands, *token, *command;
-    const char *separator = ";";
-    int len, i = 0, j;
+	char *token;
+	char *commands[BUFFER_SIZE];
+	int i = 0, j;
 
-    if (input == NULL)
-        return;
+	token = _strtok(input, ";");
 
-    commands = malloc(BUFFER_SIZE * sizeof(char *));
-    if (commands == NULL)
-    {
-        perror("malloc");
-        exit(EXIT_FAILURE);
-    }
+	while (token != NULL && i < BUFFER_SIZE - 1)
+	{
+		commands[i] = token;
+		token = _strtok(NULL, ";");
+		i++;
+	}
 
-    token = _strtok(input, separator);
+	commands[i] = NULL;
 
-    while (token != NULL)
-    {
-        command = malloc((_strlen(token) + 1) * sizeof(char));
-        if (command == NULL)
-        {
-            perror("malloc");
-            exit(EXIT_FAILURE);
-        }
-
-        _strcpy(command, token);
-        commands[i] = command;
-        i++;
-
-        token = _strtok(NULL, separator);
-    }
-
-    commands[i] = NULL;
-
-    for (j = 0; j < i; j++)
-    {
-        command = commands[j];
-
-        while (*command == ' ')
-            command++;
-
-        len = _strlen(command);
-
-        while (len > 0 && command[len - 1] == ' ')
-            command[--len] = '\0';
-
-        if (_strlen(command) > 0)
-        {
-            printf("Executing command: %s\n", command);
-            execute_single_command(command);
-            printf("Command executed successfully.\n");
-        }
-    }
-
-    for (j = 0; j < i; j++)
-    {
-        free(commands[j]);
-    }
-
-    free(commands);
-    free(input);
+	for (j = 0; j < i; j++)
+	{
+		process_commands(commands[j]);
+	}
 }
 
 /**
- * execute_single_command - executes a single command.
- * @command: the command to execute.
+ * process_commands - splits string based on ; & executes commands individually.
+ * @command: the user input string.
  */
 
-void execute_single_command(char *command)
+void process_commands(char *command)
 {
-    int i = 0, exit_status, status;
-    pid_t pid;
-    char *error_msg = "Command exited with error: ";
-    char *full_error_msg, *token;
-    char *args[BUFFER_SIZE], *exec_path;
+	char *token;
+	char *args[BUFFER_SIZE];
+	int i = 0;
 
-    if (command != NULL)
-    {
-        token = _strtok(command, " ");
-        if (token == NULL)
-            return;
-    }
+	if (command != NULL)
+	{
+		token = _strtok(command, " ");
+		if (token == NULL)
+			return;
+	}
 
-    while (token != NULL && i < BUFFER_SIZE - 1)
-    {
-        args[i] = token;
-        token = _strtok(NULL, " ");
-        i++;
-    }
-    args[i] = NULL;
+	while (token != NULL && i < BUFFER_SIZE - 1)
+	{
+		args[i] = token;
+		token = _strtok(NULL, " ");
+		i++;
+	}
 
-    if (_strcmp(args[0], "exit") == 0)
-    {
-        exit_status = (args[1] != NULL) ? _atoi(args[1]) : 0;
-        exit_shell_with_status(exit_status);
-    }
-    else if (_strcmp(args[0], "_setenv") == 0)
-    {
-        if (args[1] != NULL && args[2] != NULL)
-        {
-            if (_setenv(args[1], args[2], 1) == 0)
-                write_to_stdout("Environment variable set successfully.\n");
-            else
-                write_to_stdout("Failed to set environment variable.\n");
-        }
-        else
-        {
-            write_to_stdout("Usage: _setenv <name> <value>\n");
-        }
-    }
-    else if (_strcmp(args[0], "_unsetenv") == 0)
-    {
-        if (args[1] != NULL)
-        {
-            if (_unsetenv(args[1]) == 0)
-                write_to_stdout("Environment variable unset successfully.\n");
-            else
-                write_to_stdout("Failed to unset environment variable.\n");
-        }
-        else
-            write_to_stdout("Usage: _unsetenv <name>\n");
-    }
-    else if (_strcmp(args[0], "cd") == 0)
-    {
-     	    cd_built_in(args);
-    }
-    else
-    {
-        pid = fork();
-        if (pid == -1)
-        {
-            perror("fork()");
-            exit(EXIT_FAILURE);
-        }
+	args[i] = NULL;
 
-        if (pid == 0)
-        {
-            exec_path = get_env_path(args[0]);
-            if (exec_path != NULL)
-            {
-                if (execve(exec_path, args, NULL) == -1)
-                {
-                    perror("execve");
-                    exit(EXIT_FAILURE);
-                }
-		free(exec_path);
-            }
-            else
-            {
-                full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
-                if (full_error_msg == NULL)
-                {
-                    perror("malloc");
-                    exit(EXIT_FAILURE);
-                }
-
-                _strcpy(full_error_msg, error_msg);
-                _strcat(full_error_msg, args[0]);
-                write_to_stdout(full_error_msg);
-                free(full_error_msg);
-		free(exec_path);
-                exit(EXIT_FAILURE);
-            }
-        }
-        else
-        {
-            waitpid(pid, &status, 0);
-
-            if (WIFEXITED(status))
-            {
-                exit_status = WEXITSTATUS(status);
-                if (exit_status != 0)
-                {
-                    full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
-                    if (full_error_msg == NULL)
-                    {
-                        perror("malloc");
-                        exit(EXIT_FAILURE);
-                    }
-
-                    _strcpy(full_error_msg, error_msg);
-                    _strcat(full_error_msg, args[0]);
-                    write_to_stdout(full_error_msg);
-                    free(full_error_msg);
-                }
-            }
-            else if (WIFSIGNALED(status))
-            {
-                write_to_stdout("Command terminated by signal.\n");
-            }
-        }
-    }
+	execute_command(args);
 }
 
+/**
+ * execute_command - tokenizes user input string into arguments.
+ * @args: the user command string.
+ */
+
+void execute_command(char *args[])
+{
+	pid_t pid;
+	int status, exit_status;
+	char error_msg[] = "Command exited with error: ";
+	char *full_error_msg, *exec_path;
+
+	if (_strcmp(args[0], "exit") == 0)
+	{
+		exit_status = 0;
+
+		if (args[1] != NULL)
+		{
+			exit_status = _atoi(args[1]);
+		}
+
+		exit_shell_with_status(exit_status);
+	}
+	else if (_strcmp(args[0], "_setenv") == 0)
+	{
+		if (args[1] != NULL && args[2] != NULL)
+		{
+			if (_setenv(args[1], args[2], 1) == 0)
+				write_to_stdout("Environment variable set successfully.\n");
+			else
+				write_to_stdout("Failed to set environment variable.\n");
+		}
+		else
+		{
+			write_to_stdout("Usage: _setenv <name> <value>\n");
+		}
+	}
+	else if (_strcmp(args[0], "_unsetenv") == 0)
+	{
+		if (args[1] != NULL)
+		{
+			if (_unsetenv(args[1]) == 0)
+				write_to_stdout("Environment variable unset successfully.\n");
+			else
+				write_to_stdout("Failed to unset environment variable.\n");
+		}
+		else
+			write_to_stdout("Usage: _unsetenv <name>\n");
+	}
+	else if (_strcmp(args[0], "cd") == 0)
+	{
+		cd_built_in(args);
+	}
+	else
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			perror("fork()");
+			exit(EXIT_FAILURE);
+		}
+
+		if (pid == 0)
+		{
+			exec_path = get_env_path(args[0]);
+			if (exec_path != NULL)
+			{
+				if (execve(exec_path, args, NULL) == -1)
+				{
+					perror("execve");
+					exit(EXIT_FAILURE);
+				}
+			}
+			else
+			{
+				full_error_msg = malloc(_strlen(error_msg) + _strlen(args[0]) + 1);
+				if (full_error_msg == NULL)
+				{
+					perror("malloc");
+					exit(EXIT_FAILURE);
+				}
+
+				_strcpy(full_error_msg, error_msg);
+				_strcat(full_error_msg, args[0]);
+				write_to_stdout(full_error_msg);
+				free(full_error_msg);
+				exit(EXIT_FAILURE);
+			}
+		}
+		else
+			wait(&status);
+	}
+}
