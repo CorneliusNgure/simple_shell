@@ -5,17 +5,39 @@
  * @s: the string to search.
  * @reject: the characters to reject.
  *
- * Return: the length of the initial segment not containing any character in reject.
+ * Return: length of initial segment not containing any character in reject.
  */
 
 size_t _strcspn(char *s, char *reject)
 {
-    char *p = s;
-    while (*p != '\0' && !_strchr(reject, *p))
-    {
-        p++;
-    }
-    return (p - s);
+	char *p = s;
+
+	while (*p != '\0' && !_strchr(reject, *p))
+	{
+		p++;
+	}
+	return (p - s);
+}
+
+/**
+ * _getenv - custom implementation of getenv function.
+ * @name: the name of the environment variable.
+ * Return: the value of the environment variable or NULL if not found.
+ */
+char *_getenv(char *name)
+{
+	extern char **environ;
+	int i, len = _strlen(name);
+
+	for (i = 0; environ[i] != NULL; i++)
+	{
+		if (_strncmp(environ[i], name, len) == 0 && environ[i][len] == '=')
+		{
+			return (environ[i] + len + 1);
+		}
+	}
+
+	return (NULL);
 }
 
 /**
@@ -30,33 +52,26 @@ int _setenv(char *name, char *value, int overwrite)
 {
 	char *env_var, *new_env_var;
 
-    if (name == NULL || name[0] == '\0' || _strchr(name, '=') != NULL)
-        return (-1);
+	if (name == NULL || name[0] == '\0' || _strchr(name, '=') != NULL)
+		return (-1);
 
-    env_var = getenv(name);
+	env_var = _getenv(name);
 
-    if (env_var != NULL && !overwrite)
-        return (0);
+	if (env_var != NULL && !overwrite)
+		return (0);
 
-    new_env_var = malloc(_strlen(name) + _strlen(value) + 2);
-    if (new_env_var == NULL)
-    {
-        perror("malloc");
-        return (-1);
-    }
+	new_env_var = malloc(_strlen(name) + _strlen(value) + 2);
+	if (new_env_var == NULL)
+	{
+		perror("malloc");
+		return (-1);
+	}
 
-    _strcpy(new_env_var, name);
-    _strcat(new_env_var, "=");
-    _strcat(new_env_var, value);
+	_strcpy(new_env_var, name);
+	_strcat(new_env_var, "=");
+	_strcat(new_env_var, value);
 
-    if (putenv(new_env_var) != 0)
-    {
-        perror("putenv");
-        free(new_env_var);
-        return (-1);
-    }
-
-    return (0);
+	return (0);
 }
 
 /**
@@ -67,20 +82,25 @@ int _setenv(char *name, char *value, int overwrite)
  */
 int _unsetenv(const char *name)
 {
-    if (name == NULL || name[0] == '\0' || _strchr(name, '=') != NULL)
-        return (-1);
+	if (name == NULL || name[0] == '\0' || _strchr(name, '=') != NULL)
+		return (-1);
 
-    if (unsetenv(name) != 0)
-    {
-        perror("unsetenv");
-        return (-1);
-    }
+	if (_unsetenv(name) != 0)
+	{
+		perror("unsetenv");
+		return (-1);
+	}
 
-    return (0);
+	return (0);
 }
+
+/**
+ * exit_shell_with_status - exits shell with the specified status.
+ * @status: the status variable.
+ */
 
 void exit_shell_with_status(int status)
 {
-    write_to_stdout("Exiting kings_shell$$...\n");
-    exit(status);
+	write_to_stdout("Exiting kings_shell$$...\n");
+	exit(status);
 }

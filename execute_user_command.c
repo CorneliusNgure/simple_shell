@@ -184,7 +184,7 @@ void run_user_command(char *input)
 
 char *get_env_path(char *command)
 {
-	char *path = getenv("PATH");
+	char *path = _getenv("PATH");
 	char *token, *full_path;
 	char delimiter[] = ":";
 

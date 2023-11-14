@@ -3,6 +3,8 @@
 
 #define BUFFER_SIZE 1024
 
+extern char **environ;
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>

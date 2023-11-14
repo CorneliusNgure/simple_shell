@@ -10,11 +10,11 @@ void cd_built_in(char **args)
 	char *new_dir, *current_dir;
 
 	if (args[1] == NULL || _strcmp(args[1], "~") == 0)
-		new_dir = getenv("HOME");
+		new_dir = _getenv("HOME");
 
 	else if (_strcmp(args[1], "-") == 0)
 	{
-		new_dir = getenv("OLDPWD");
+		new_dir = _getenv("OLDPWD");
 	}
 	else
 		new_dir = args[1];
