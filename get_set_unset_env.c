@@ -26,7 +26,6 @@ size_t _strcspn(char *s, char *reject)
  */
 char *_getenv(char *name)
 {
-	extern char **environ;
 	int i, len = _strlen(name);
 
 	for (i = 0; environ[i] != NULL; i++)

@@ -38,7 +38,6 @@ void printCurrent_env_vars(void)
 {
 	int i = 0;
 	char *env_var;
-	extern char **environ;
 
 	while (1)
 	{
