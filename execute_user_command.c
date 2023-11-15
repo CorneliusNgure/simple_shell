@@ -113,7 +113,6 @@ void execute_external_command(char *args[])
 			{
 				if (execve(exec_path, args, NULL) == -1)
 				{
-					write_to_stdout("Command exited with error: ");
 					write_to_stdout(args[0]);
 					perror("execve");
 					exit(EXIT_FAILURE);
@@ -121,8 +120,11 @@ void execute_external_command(char *args[])
 			}
 			else
 			{
-				write_to_stdout("Command not found: ");
 				write_to_stdout(args[0]);
+				write_to_stdout(":");
+				write_to_stdout(" ");
+				write_to_stdout("command not found");
+				write_to_stdout("\n");
 				exit(EXIT_FAILURE);
 			}
 		}
