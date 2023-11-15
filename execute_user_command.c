@@ -84,42 +84,48 @@ void process_commands(char *command)
  * @args: the array of command and arguments.
  */
 
-void execute_external_command(char *args[])
-{
-	pid_t pid;
-	int status;
-	char *exec_path;
+void execute_external_command(char *args[]) {
+    pid_t pid;
+    int status;
+    char *exec_path;
 
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork()");
-		exit(EXIT_FAILURE);
-	}
+    pid = fork();
+    if (pid == -1) {
+        perror("fork()");
+        exit(EXIT_FAILURE);
+    }
 
-	if (pid == 0)
-	{
-		exec_path = get_env_path(args[0]);
+    if (pid == 0) {
+        if (args[0][0] == '/') {
+            if (access(args[0], X_OK) == 0) {
+                if (execve(args[0], args, NULL) == -1) {
+                    perror("execve");
+                    exit(EXIT_FAILURE);
+                }
+            } else {
+                write_to_stdout("Command not found or not executable: ");
+                write_to_stdout(args[0]);
+                exit(EXIT_FAILURE);
+            }
+        } else {
+            exec_path = get_env_path(args[0]);
 
-		if (exec_path != NULL)
-		{
-			if (execve(exec_path, args, NULL) == -1)
-			{
-				write_to_stdout("Command exited with error: ");
-				write_to_stdout(args[0]);
-				perror("execve");
-				exit(EXIT_FAILURE);
-			}
-		}
-		else
-		{
-			write_to_stdout("Command not found: ");
-			write_to_stdout(args[0]);
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
-		wait(&status);
+            if (exec_path != NULL) {
+                if (execve(exec_path, args, NULL) == -1) {
+                    write_to_stdout("Command exited with error: ");
+                    write_to_stdout(args[0]);
+                    perror("execve");
+                    exit(EXIT_FAILURE);
+                }
+            } else {
+                write_to_stdout("Command not found: ");
+                write_to_stdout(args[0]);
+                exit(EXIT_FAILURE);
+            }
+        }
+    } else {
+        wait(&status);
+    }
 }
 
 /**
