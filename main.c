@@ -99,36 +99,49 @@ int main(void)
 	char *input, *arg;
 	int exit_status;
 
-	while (1)
+	if (isatty(STDIN_FILENO))
 	{
-		write_to_stdout("kings_shell$$> ");
-		input = readUserInput();
-
-		if (input != NULL)
+		while (1)
 		{
-			if (_strcmp(input, "exit") == 0)
+			write_to_stdout("kings_shell$$> ");
+			input = readUserInput();
+
+			if (input != NULL)
 			{
-				free(input);
-				write_to_stdout("Exiting kings_shell$$\n");
-				exit(0);
+				if (_strcmp(input, "exit") == 0)
+				{
+					free(input);
+					write_to_stdout("Exiting kings_shell$$\n");
+					exit(0);
+				}
+				else if (_strncmp(input, "exit", 4) == 0)
+				{
+					arg = _strtok(input + 4, " ");
+					exit_status = (arg != NULL) ? _atoi(arg) : 0;
+					write_to_stdout("Exit status: ");
+					exit(exit_status);
+				}
+				else if (_strcmp(input, "env") == 0)
+				{
+					free(input);
+					printCurrent_env_vars();
+				}
+				else
+				{
+					run_user_command(input);
+					free(input);
+				}
 			}
-			else if (_strncmp(input, "exit", 4) == 0)
-			{
-				arg = _strtok(input + 4, " ");
-				exit_status = (arg != NULL) ? _atoi(arg) : 0;
-				write_to_stdout("Exit status: ");
-				exit(exit_status);
-			}
-			else if (_strcmp(input, "env") == 0)
-			{
-				free(input);
-				printCurrent_env_vars();
-			}
-		else
-			{
-				run_user_command(input);
-				free(input);
-			}
+		}
+	}
+	else
+	{
+		input = readUserInput();
+		while (input != NULL)
+		{
+			run_user_command(input);
+			free(input);
+			input = readUserInput();
 		}
 	}
 	return (0);
