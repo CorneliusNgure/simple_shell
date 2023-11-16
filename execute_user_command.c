@@ -76,7 +76,7 @@ void process_commands(char *command)
 
 	args[i] = NULL;
 
-	execute_command(args);
+	 execute_external_command(args, i);
 }
 
 /**
@@ -84,12 +84,13 @@ void process_commands(char *command)
  * @args: the array of command and arguments.
  */
 
-void execute_external_command(char *args[])
+void execute_external_command(char *args[], size_t size)
 {
 	pid_t pid;
 	int status;
 	char *exec_path;
 
+	_bubbleSort(args, size);
 	pid = fork();
 	if (pid == -1)
 	{
@@ -140,7 +141,7 @@ void execute_external_command(char *args[])
  * @args: the array of command and arguments.
  */
 
-void execute_command(char *args[])
+void execute_command(char *args[], size_t size)
 {
 	int exit_status;
 
@@ -176,5 +177,5 @@ void execute_command(char *args[])
 	else if (_strcmp(args[0], "cd") == 0)
 		cd_built_in(args);
 	else
-		execute_external_command(args);
+		execute_external_command(args, size);
 }

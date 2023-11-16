@@ -40,7 +40,12 @@ int _setenv(char *name, char *value, int overwrite);
 int _unsetenv(const char *name);
 char *_itoa(int num, char *str, int base);
 void process_commands(char *input);
-void execute_command(char *args[]);
-void execute_external_command(char *args[]);
+void execute_command(char *args[], size_t size);
+void execute_external_command(char *args[], size_t size);
+char _tolower(char c);
+int _strcasecmp(const char *s1, const char *s2);
+void _swap(char **a, char **b);
+void _bubbleSort(char *args[], int n);
+
 
 #endif
